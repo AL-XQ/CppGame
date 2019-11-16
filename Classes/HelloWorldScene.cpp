@@ -102,7 +102,7 @@ bool HelloWorld::init()
     }
 
     // add "HelloWorld" splash screen"
-    auto sprite = Sprite::create("HelloWorld.png");
+    /*auto sprite = Sprite::create("HelloWorld.png");
     if (sprite == nullptr)
     {
         problemLoading("'HelloWorld.png'");
@@ -114,7 +114,29 @@ bool HelloWorld::init()
 
         // add the sprite as a child to this layer
         this->addChild(sprite, 0);
-    }
+    }*/
+
+	GLenum error;
+
+	m_pProgram = new GLProgram;
+
+	m_pProgram->initWithFilenames("shaders/shader_Otex.vsh", "shaders/shader_Otex.fsh");
+	error = glGetError();
+
+	m_pProgram->bindAttribLocation("a_position", GLProgram::VERTEX_ATTRIB_POSITION);
+	error = glGetError();
+
+	m_pProgram->bindAttribLocation("a_color", GLProgram::VERTEX_ATTRIB_COLOR);
+	error = glGetError();
+
+	m_pProgram->link();
+	error = glGetError();
+
+	m_pProgram->updateUniforms();
+	error = glGetError();
+
+	//Director::getInstance()->setClearColor(Color4F(0, 1, 0, 0));
+
     return true;
 }
 
@@ -130,4 +152,54 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
     //_eventDispatcher->dispatchEvent(&customEndEvent);
 
 
+}
+
+void HelloWorld::draw(Renderer* renderer, const Mat4& transform, uint32_t flags)
+{
+	//glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	GLenum error;
+
+	GL::enableVertexAttribs(GL::VERTEX_ATTRIB_FLAG_POSITION | GL::VERTEX_ATTRIB_FLAG_COLOR);
+	error = glGetError();
+
+	m_pProgram->use();
+	error = glGetError();
+
+	Vec3 pos[4];
+	Vec4 color[4];
+	const float x = 0.5f;
+	const float y = 0.5f;
+
+	
+
+	pos[0] = Vec3(-x, -y, 0);
+	pos[1] = Vec3(-x, y, 0);
+	pos[2] = Vec3(x, -y, 0);
+	pos[3] = Vec3(x, y, 0);
+	
+	color[0] = Vec4(1, 0, 0, 0.1f);
+	color[1] = Vec4(1, 0, 0, 0.1f);
+	color[2] = Vec4(1, 0, 0, 0.1f);
+	color[3] = Vec4(1, 0, 0, 0.1f);
+
+	glVertexAttribPointer(GLProgram::VERTEX_ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 0, pos);
+
+	glVertexAttribPointer(GLProgram::VERTEX_ATTRIB_COLOR, 4, GL_FLOAT, GL_FALSE, 0, color);
+
+	//glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	for (int i = 0; i < 10; i++)
+	{
+		float _offset = 0.05f;
+		pos[0].x += _offset; pos[0].y += _offset;
+		pos[1].x += _offset; pos[1].y += _offset;
+		pos[2].x += _offset; pos[2].y += _offset;
+		pos[3].x += _offset; pos[3].y += _offset;
+
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	}
+
+	error = glGetError();
 }

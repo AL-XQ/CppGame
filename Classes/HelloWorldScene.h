@@ -39,6 +39,11 @@ public:
     
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
+
+	void draw(cocos2d::Renderer* renderer, const cocos2d::Mat4& transform, uint32_t flags);
+
+public:
+	cocos2d::GLProgram* m_pProgram;
 };
 
 #endif // __HELLOWORLD_SCENE_H__
