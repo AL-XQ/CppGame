@@ -44,6 +44,8 @@ public:
 
 public:
 	cocos2d::GLProgram* m_pProgram;
+	int uniform_sampler;
+	cocos2d::Texture2D* m_pTexture;
 };
 
 #endif // __HELLOWORLD_SCENE_H__
