@@ -120,7 +120,7 @@ bool HelloWorld::init()
 
 	m_pProgram = new GLProgram;
 
-	m_pProgram->initWithFilenames("shaders/shader_1tex.vsh", "shaders/shader_1tex.fsh");
+	m_pProgram->initWithFilenames("shaders/shader_0tex.vsh", "shaders/shader_0tex.fsh");
 	error = glGetError();
 
 	m_pProgram->bindAttribLocation("a_position", GLProgram::VERTEX_ATTRIB_POSITION);
@@ -129,8 +129,8 @@ bool HelloWorld::init()
 	m_pProgram->bindAttribLocation("a_color", GLProgram::VERTEX_ATTRIB_COLOR);
 	error = glGetError();
 
-	m_pProgram->bindAttribLocation("a_texCoord", GLProgram::VERTEX_ATTRIB_TEX_COORD);
-	error = glGetError();
+	//m_pProgram->bindAttribLocation("a_texCoord", GLProgram::VERTEX_ATTRIB_TEX_COORD);
+	//error = glGetError();
 
 	m_pProgram->link();
 	error = glGetError();
@@ -138,9 +138,11 @@ bool HelloWorld::init()
 	m_pProgram->updateUniforms();
 	error = glGetError();
 
-	uniform_sampler = glGetUniformLocation(m_pProgram->getProgram(), "sampler");
+	uniform_wvp_matrix = glGetUniformLocation(m_pProgram->getProgram(), "u_wvp_matrix");
 
-	m_pTexture = Director::getInstance()->getTextureCache()->addImage("HelloWorld.png");
+	//uniform_sampler = glGetUniformLocation(m_pProgram->getProgram(), "sampler");
+
+	//m_pTexture = Director::getInstance()->getTextureCache()->addImage("HelloWorld.png");
 
 	//Director::getInstance()->setClearColor(Color4F(0, 1, 0, 0));
 
@@ -168,7 +170,7 @@ void HelloWorld::draw(Renderer* renderer, const Mat4& transform, uint32_t flags)
 
 	GLenum error;
 
-	GL::enableVertexAttribs(GL::VERTEX_ATTRIB_FLAG_POSITION | GL::VERTEX_ATTRIB_FLAG_COLOR | GL::VERTEX_ATTRIB_FLAG_TEX_COORD);
+	GL::enableVertexAttribs(GL::VERTEX_ATTRIB_FLAG_POSITION | GL::VERTEX_ATTRIB_FLAG_COLOR);
 	error = glGetError();
 
 	m_pProgram->use();
@@ -176,9 +178,9 @@ void HelloWorld::draw(Renderer* renderer, const Mat4& transform, uint32_t flags)
 
 	Vec3 pos[4];
 	Vec4 color[4];
-	Vec2 uv[4];
-	const float x = 0.5f;
-	const float y = 0.5f;
+	//Vec2 uv[4];
+	const float x = 50.0f;
+	const float y = 50.0f;
 
 	
 
@@ -187,26 +189,24 @@ void HelloWorld::draw(Renderer* renderer, const Mat4& transform, uint32_t flags)
 	pos[2] = Vec3(x, -y, 0);
 	pos[3] = Vec3(x, y, 0);
 	
-	color[0] = Vec4(1, 1, 1, 1);
-	color[1] = Vec4(1, 1, 1, 1);
-	color[2] = Vec4(1, 1, 1, 1);
-	color[3] = Vec4(1, 1, 1, 1);
+	color[0] = Vec4(1, 0, 0, 1);
+	color[1] = Vec4(1, 0, 0, 1);
+	color[2] = Vec4(1, 0, 0, 1);
+	color[3] = Vec4(1, 0, 0, 1);
 
-	uv[0] = Vec2(0, 1);
+	/*uv[0] = Vec2(0, 1);
 	uv[1] = Vec2(0, 0);
 	uv[2] = Vec2(1, 1);
-	uv[3] = Vec2(1, 0);
+	uv[3] = Vec2(1, 0);*/
 
 	glVertexAttribPointer(GLProgram::VERTEX_ATTRIB_POSITION, 3, GL_FLOAT, GL_FALSE, 0, pos);
 
 	glVertexAttribPointer(GLProgram::VERTEX_ATTRIB_COLOR, 4, GL_FLOAT, GL_FALSE, 0, color);
 
-	glVertexAttribPointer(GLProgram::VERTEX_ATTRIB_TEX_COORD, 2, GL_FLOAT, GL_FALSE, 0, uv);
+	//glVertexAttribPointer(GLProgram::VERTEX_ATTRIB_TEX_COORD, 2, GL_FLOAT, GL_FALSE, 0, uv);
 
-	glUniform1i(uniform_sampler, 0);
-	GL::bindTexture2D(m_pTexture->getName());
-
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	//glUniform1i(uniform_sampler, 0);
+	//GL::bindTexture2D(m_pTexture->getName());
 
 	/*for (int i = 0; i < 10; i++)
 	{
@@ -218,6 +218,31 @@ void HelloWorld::draw(Renderer* renderer, const Mat4& transform, uint32_t flags)
 
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}*/
+
+	static float yaw = 0.0f;
+	yaw += 0.01f;
+	Mat4 matProjection;
+	Mat4 matView;
+	Mat4 matWVP;
+	Mat4 matTrans, matScale, matRot, matWorld;
+
+	matProjection = _director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
+
+	matView = _director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+
+	Mat4::createTranslation(Vec3(250, 50, 0), &matTrans);
+
+	Mat4::createRotationY(yaw, &matRot);
+
+	Mat4::createScale(Vec3(1, 1, 1), &matScale);
+
+	matWorld = matTrans * matRot * matScale;
+
+	matWVP = matProjection * matView * matWorld;
+
+	glUniformMatrix4fv(uniform_wvp_matrix, 1, GL_FALSE, matWVP.m);
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	error = glGetError();
 }
