@@ -18,7 +18,10 @@
     <ClCompile Include="..\Classes\AppDelegate.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\HelloWorldScene.cpp">
+    <ClCompile Include="..\Classes\HelloShaderScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\ShaderNode.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,7 +32,10 @@
     <ClInclude Include="..\Classes\AppDelegate.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\HelloWorldScene.h">
+    <ClInclude Include="..\Classes\HelloShaderScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\ShaderNode.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
@@ -37,5 +43,19 @@
     <ResourceCompile Include="game.rc">
       <Filter>resource</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Resources\shaders\shader_0tex.fsh">
+      <Filter>src</Filter>
+    </None>
+    <None Include="..\Resources\shaders\shader_0tex.vsh">
+      <Filter>src</Filter>
+    </None>
+    <None Include="..\Resources\shaders\shader_1tex.fsh">
+      <Filter>src</Filter>
+    </None>
+    <None Include="..\Resources\shaders\shader_1tex.vsh">
+      <Filter>src</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,9 +1,9 @@
-attribute vec4 a_position;
-attribute vec4 a_color;
+attribute vec4 a_position;//（入力）座標
+attribute vec4 a_color; //（入力）色
 
 uniform mat4 u_wvp_matrix;
 
-varying vec4 v_color;
+varying vec4 v_color; //（出力）色
 
 void main()
 {
